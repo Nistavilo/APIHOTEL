@@ -1,0 +1,77 @@
+const Hotel = require('../models/Hotel.js')
+const Room = require('../models/Room.js')
+
+const createHotel = async(req,res,next  )=>{
+    try{
+        const hotel= await Hotel.create(req.body)
+        res.status(201).json(hotel)
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+
+const updateHotel = async(req,res,next  )=>{
+    const {id} = req.params
+    try{
+        const hotel= await Hotel.findByIdAndUpdate(id,{$set: req,body}, {new: true})
+        res.status(200).json(hotel)
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+    
+const deleteHotel = async(req,res,next  )=>{
+    const {id} = req.params
+    try{
+        const hotel= await Hotel.findByIdAndDelete(id)
+
+        res.status(200).json({message:"Silme işlemini başarılı..."})
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+
+
+const getSingleHotel = async(req,res,next  )=>{
+    const {id} = req.params
+    try{
+        const hotel= await Hotel.findById(id)
+
+        res.status(200).json(hotel)
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+
+const getAllHotel = async(req,res,next  )=>{
+    const {min,max,...others} = req.query
+    try{
+        const hotel= await Hotel.find({
+        ...others,
+        cheapestPrice : {$gt:min |1,$lt:max|999}
+
+        }).limit(req.query.limit)
+
+        res.status(200).json(hotel)
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+
+
+const typeByCount = async(req,res,next  )=>{
+    try{
+        const hotel= await Hotel.countDocuments({type:"hotel"})
+        const villa= await Hotel.countDocuments({type:"villa"})
+
+        res.status(200).json(hotel)
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
