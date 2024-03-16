@@ -66,12 +66,32 @@ const getAllHotel = async(req,res,next  )=>{
 
 const typeByCount = async(req,res,next  )=>{
     try{
-        const hotel= await Hotel.countDocuments({type:"hotel"})
-        const villa= await Hotel.countDocuments({type:"villa"})
+        const hotel=await Hotel.countDocuments({type:"hotel"})
+        const villa = await Hotel.countDocuments({type:"villa "})
 
+        res.status(200).json([
+            {type:"hotel", count:hotel},
+            {type:"villa", count:villa}
+        ])
+        
+    }
+    catch(error){
+    res.status(500).json({message:error})
+}}
+
+const typeByCity = async(req,res,next  )=>{
+    try{
+        const cities = req.query.cities.split(',');
+        const hotel = await Promise.all(
+            cities.map((city) =>{
+                return Hotel.countDocuments({city:city})
+            })
+        )
         res.status(200).json(hotel)
         
     }
     catch(error){
     res.status(500).json({message:error})
 }}
+
+module.exports= {typeByCity,typeByCount,createHotel,updateHotel,deleteHotel,getAllHotel,getSingleHotel}
